@@ -62,7 +62,8 @@ function pointToLayer(feature, latlng){
 		popupContent += "<p><b>Percentage of Work Commutes by Public Transportation in " + year + ":</b> " + feature.properties[attribute]+ " %</p>";
 		layer.bindPopup(popupContent, {
 // Creating an offset to each circle marker
-			offset: new L.Point(0,-MarkerOptions.radius)
+			offset: new L.Point(0,-MarkerOptions.radius),
+			closeButton: false
 		});
 
 // Creating event listeners to open the popup on hover
