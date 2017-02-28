@@ -15,15 +15,22 @@
 	</head>
 		<h1>Percentage of Work Commuters using Public Transportation in Seattle, WA (2011-2015)</h1>
 	<body>
+		<div class="btn-group">
+			<button type="button" id="all" class="btn btn-success">All</button>
+			<button type="button" id="ten" class="btn btn-primary">5-10%</button>
+			<button type="button" id="fifteen" class="btn btn-primary">10-15%</button>
+			<button type="button" id="twenty" class="btn btn-primary">15-20%</button>
+			<button type="button" id="twentyplus" class="btn btn-primary">20%+</button>
+	</div>
 		<div id="mapid"></div>
 		<div id="panel"></div>
-		<nav class='menu-ui'>
+		<!-- <nav class='menu-ui'>
 		  <a href='#' class='active' data-filter='all'>Show All</a>
 			<a href='#' data-filter='ten'>5-10%</a>
 			<a href='#' data-filter='fifteen'>10-15%</a>
 		  <a href='#' data-filter='twenty'>15-20%</a>
 		  <a href='#' data-filter='twentyplus'>20%</a>
-		</nav>
+		</nav> -->
 		<script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
 		<script type="text/javascript" src="lib/leaflet-src.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>

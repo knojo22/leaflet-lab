@@ -1,5 +1,8 @@
 /* JavaScript by Jon Fok, 2017 */
 
+var current = ""
+
+
 //Initializing the function called when the script loads
 function initialize(){
 	createMap();
@@ -32,7 +35,6 @@ function getData(map){
 			var attributes = processData(response);
 			createPropSymbols(response, map, attributes);
 			createSequenceControls(map, attributes);
-			// createFilter(response, map, attributes);
     }
   });
 };
@@ -41,6 +43,7 @@ function getData(map){
 function pointToLayer(feature, latlng, attributes){
 // Determing which attribute to visualize with the proportional symbols
 	var attribute = attributes[0];
+  current = attribute;
 	console.log(attribute);
 
 // Creating the marker options
@@ -125,6 +128,7 @@ function createSequenceControls(map, attributes){
 // $('#reverse').html('<img src="img/reverse.png">');
 // $('#forward').html('<img src="img/forward.png">');
 
+// U
 	$('.skip').click(function(){
 		var index = $('.range-slider').val();
 
@@ -149,55 +153,54 @@ function createSequenceControls(map, attributes){
 function createPropSymbols(data,map,attributes){
 
 // Creating the Leaflet GeoJSON layer and adding the layer to the map
-  L.geoJson(data, {
+  var all = L.geoJson(data, {
     pointToLayer: function(feature, latlng){
 			return pointToLayer(feature, latlng, attributes);
 		}
   }).addTo(map);
-};
 
-// function createFilter(response, map, attributes){
-// 	$('#all').click(function(){
-// 		console.log(attributes)
-		// 	L.geoJson(response)
-		// });
-		// $('#ten').click(function(){
-		// 	L.geoJson(response, {
-		// 		filter: function(feature, latlng) {
-		// 		return feature.properties[attributes] <= 10;
-		// 		updatePropSymbols(map, attributes)
-		// 		}
-		// 	});
-		// });
-		// $('#fifteen').click(function() {
-		// 	L.geoJson(response, {
-		// 		filter: function(feature, latlng) {
-		// 		return feature.properties[attributes] > 10 && feature.properties[attributes] <=15;
-		// 		updatePropSymbols(map, attributes)
-		// 		}
-		// 	});
-		// });
-		// $('#twenty').click(function(){
-		// 	L.geoJson(response, {
-		// 		filter: function(feature, latlng){
-		// 		return feature.properties[attributes] > 15 && feature.properties[attributes] <= 20;
-		// 		updatePropSymbols(map, attributes)
-		// 		}
-		// 	});
-		// });
-		// $('#twentyplus').click(function(){
-		// 	L.geoJson(response, {
-		// 		filter: function(feature, latlng){
-		// 		return feature.properties[attributes] > 20;
-		// 		updatePropSymboles(map, attributes)
-		// 		}
-		// 	});
-		// });
-// }
+  $('#all').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current]){
+        var r = calcPropRadius(layer.feature.properties[current])
+        layer.setRadius(r)
+      }
+    });
+  });
+  $('#ten').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] <= 10){
+        layer.setRadius(0)
+      }
+    });
+  });
+  $('#fifteen').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] > 10 && layer.feature.properties[current] <= 15){
+        layer.setRadius(0)
+      }
+    });
+  });
+  $('#twenty').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] > 15 && layer.feature.properties[current] <= 20){
+        layer.setRadius(0)
+      }
+    });
+  });
+  $('#twentyplus').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] > 20){
+        layer.setRadius(0)
+      }
+    });
+  });
+};
 
 // Creating a function to update the proptional symbols for each of the data points
 function updatePropSymbols(map, attribute){
-	map.eachLayer(function(layer){
+  current = attribute;
+  map.eachLayer(function(layer){
 		if (layer.feature && layer.feature.properties[attribute]){
 			var props = layer.feature.properties;
 			var radius = calcPropRadius(props[attribute]);
