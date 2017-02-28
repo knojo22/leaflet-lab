@@ -12,7 +12,7 @@ function initialize(){
 function createMap(){
   var map = L.map('mapid', {
     center: [47.602654,-122.329797],
-    zoom: 10
+    zoom: 11
   });
 
 // Adding the OpenStreetMap base tilelayer
@@ -128,7 +128,7 @@ function createSequenceControls(map, attributes){
 // $('#reverse').html('<img src="img/reverse.png">');
 // $('#forward').html('<img src="img/forward.png">');
 
-// U
+// Creating event listeners for the sequence controls
 	$('.skip').click(function(){
 		var index = $('.range-slider').val();
 
@@ -159,6 +159,8 @@ function createPropSymbols(data,map,attributes){
 		}
   }).addTo(map);
 
+// Creating event listeners to create proportional symbols based upon the attributes
+
   $('#all').click(function(){
     map.eachLayer(function(layer){
       if (layer.setRadius && layer.feature.properties[current]){
@@ -167,32 +169,60 @@ function createPropSymbols(data,map,attributes){
       }
     });
   });
+
+// Event listeners that add the data layer based upon the conditions and removes
+// the data layers from the map.
   $('#ten').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] > 10){
+        layer.setRadius(0)
+      }
+			else if(layer.setRadius) {
+				var radius = calcPropRadius(layer.feature.properties[current])
+				layer.setRadius(radius)
+			}
+    });
+  });
+
+  $('#fifteen').click(function(){
     map.eachLayer(function(layer){
       if (layer.setRadius && layer.feature.properties[current] <= 10){
         layer.setRadius(0)
       }
-    });
-  });
-  $('#fifteen').click(function(){
-    map.eachLayer(function(layer){
-      if (layer.setRadius && layer.feature.properties[current] > 10 && layer.feature.properties[current] <= 15){
+      else if (layer.setRadius && layer.feature.properties[current] > 15){
         layer.setRadius(0)
       }
+			else if(layer.setRadius){
+				var radius = calcPropRadius(layer.feature.properties[current])
+				layer.setRadius(radius)
+			}
     });
   });
+
   $('#twenty').click(function(){
     map.eachLayer(function(layer){
-      if (layer.setRadius && layer.feature.properties[current] > 15 && layer.feature.properties[current] <= 20){
+      if (layer.setRadius && layer.feature.properties[current] <= 15){
         layer.setRadius(0)
-      }
-    });
-  });
-  $('#twentyplus').click(function(){
-    map.eachLayer(function(layer){
+      };
       if (layer.setRadius && layer.feature.properties[current] > 20){
         layer.setRadius(0)
       }
+			else if(layer.setRadius){
+				var radius = calcPropRadius(layer.feature.properties[current])
+				layer.setRadius(radius)
+			}
+    });
+  });
+
+  $('#twentyplus').click(function(){
+    map.eachLayer(function(layer){
+      if (layer.setRadius && layer.feature.properties[current] <= 20){
+        layer.setRadius(0)
+      }
+			else if(layer.setRadius){
+				var radius = calcPropRadius(layer.feature.properties[current])
+				layer.setRadius(radius)
+			}
     });
   });
 };
