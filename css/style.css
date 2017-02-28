@@ -1,18 +1,75 @@
 /* Stylesheet by Jon Fok, 2017 */
-
+h1 {
+  font-size: 20px;
+  padding-top: 10px;
+  text-align: left;
+  font-family:"Georgia", Helvetica, sans-serif;
+}
 
 #mapid {
-  height: 500px;
-  width: 42%;
-  display: inline-block;
+  height: 400px;
+  width: 60%;
+  display: inline-flex;
 }
 
 #panel {
-  width: 16%;
-  padding: 20px;
+  width: 20%;
+  padding: 10px;
   display: inline-block;
   vertical-align: top;
+  text-align: center;
+  line-height: 42px;
 }
+
+.range-slider{
+  width: 40%;
+}
+
+#forward {
+  float: right;
+  font-family:"Georgia", Helvetica, sans-serif;
+}
+
+#reverse {
+  float: left;
+  font-family:"Georgia", Helvetica, sans-serif;;
+}
+
+.menu-ui {
+  background:#fff;
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1;
+  border-radius:3px;
+  width:120px;
+  border:1px solid rgba(0,0,0,0.4);
+  }
+  .menu-ui a {
+    font-size:13px;
+    color:#404040;
+    display:block;
+    margin:0;padding:0;
+    padding:10px;
+    text-decoration:none;
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    text-align:center;
+    }
+    .menu-ui a:first-child {
+      border-radius:3px 3px 0 0;
+      }
+    .menu-ui a:last-child {
+      border:none;
+      border-radius:0 0 3px 3px;
+      }
+    .menu-ui a:hover {
+      background:#f8f8f8;
+      color:#404040;
+      }
+    .menu-ui a.active,
+    .menu-ui a.active:hover {
+      background:#3887BE;
+      color:#FFF;
+      }
 
 .leaflet-popup-content p {
   margin: 0.2em 0;

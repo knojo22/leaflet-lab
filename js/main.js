@@ -22,20 +22,26 @@ function createMap(){
     getData(map);
 };
 
-// Creating a function to calculate the radius for each proportional symbol
-function calcPropRadius(attValue){
-// Creating variables for the scale factor (scaleFactor), the area with the
-// scale factor (area) and the calculated radius based on the area (radius)
-		var scaleFactor = 10;
-		var area = attValue * scaleFactor;
-		var radius = Math.sqrt(area/Math.PI);
-		return radius;
-	};
-// Creating a function to add the circle markers for points features into the map
-function pointToLayer(feature, latlng){
+// Defining the getData function to retrive the data Seattle_PublicTransportation geojson
+// data and placing the data on the map
+function getData(map){
+	// Importing the GeoJSON data
+  $.ajax("data/Seattle_PublicTransportation.geojson", {
+    dataType: "json",
+    success: function(response){
+			var attributes = processData(response);
+			createPropSymbols(response, map, attributes);
+			createSequenceControls(map, attributes);
+			// createFilter(response, map, attributes);
+    }
+  });
+};
 
+// Creating a function to add the circle markers for points features into the map
+function pointToLayer(feature, latlng, attributes){
 // Determing which attribute to visualize with the proportional symbols
-	var attribute = "TotalWorkersPTPer_2015";
+	var attribute = attributes[0];
+	console.log(attribute);
 
 // Creating the marker options
 	var MarkerOptions = {
@@ -60,6 +66,8 @@ function pointToLayer(feature, latlng){
 		var popupContent = "<p><b>Census Tract: </b>" + feature.properties.CensusTract + "</p>"
 		var year = attribute.split("_")[1];
 		popupContent += "<p><b>Percentage of Work Commutes by Public Transportation in " + year + ":</b> " + feature.properties[attribute]+ " %</p>";
+		//
+		// var popupContent = "Census Tract: " + String(feature.properties.CensusTract);
 		layer.bindPopup(popupContent, {
 // Creating an offset to each circle marker
 			offset: new L.Point(0,-MarkerOptions.radius),
@@ -78,26 +86,133 @@ function pointToLayer(feature, latlng){
 		return layer;
 }
 
-// Adding the circle markers for the point features in the map
-function createPropSymbols(data,map){
-// Defining a function to calculate the radius of each proportional symbol
+// Creating a function to calculate the radius for each proportional symbol
+function calcPropRadius(attValue){
+// Creating variables for the scale factor (scaleFactor), the area with the
+// scale factor (area) and the calculated radius based on the area (radius)
+		var scaleFactor = 10;
+		var area = attValue * scaleFactor;
+		var radius = Math.sqrt(area/Math.PI);
+		return radius;
+	};
 
-// Creating the Leaflet GeoJSON layer and adding the layer to the map
-    L.geoJson(data, {
-      pointToLayer: pointToLayer
-    }).addTo(map);
+// Creating a function to process the data to create the attributes
+function processData(data){
+	var attributes = [];
+	var properties = data.features[0].properties;
+	for (var attribute in properties){
+		if (attribute.indexOf("TotalWorkersPTPer")>-1){
+			attributes.push(attribute);
+		};
+	};
+	console.log(attributes);
+	return attributes;
 };
 
-// Defining the getData function to retrive the data MegaCities geojson
-// data and placing the data on the map
-function getData(map){
-// Importing the GeoJSON data
-  $.ajax("data/Seattle_PublicTransportation.geojson", {
-    dataType: "json",
-    success: function(response){
-			createPropSymbols(response, map);
-    }
-  });
+// Defining a function to create sequence controls
+function createSequenceControls(map, attributes){
+	$('#panel').append('<input class="range-slider" type="range">');
+
+	$('.range-slider').attr({
+		max: 4,
+		min: 0,
+		value: 0,
+		step: 1
+	});
+	$('#panel').append('<button class="skip" id="reverse">Reverse</button>');
+	$('#panel').append('<button class="skip" id="forward">Skip</button>');
+
+// $('#reverse').html('<img src="img/reverse.png">');
+// $('#forward').html('<img src="img/forward.png">');
+
+	$('.skip').click(function(){
+		var index = $('.range-slider').val();
+
+		if ($(this).attr('id') == 'forward'){
+			index++;
+			index = index > 4 ? 0 : index;
+		} else if ($(this).attr('id') == 'reverse'){
+			index--;
+			index = index < 0 ? 4 : index;
+		};
+		$('.range-slider').val(index);
+		updatePropSymbols(map, attributes[index]);
+	});
+
+	$('.range-slider').on('input', function(){
+		var index = $(this).val();
+		updatePropSymbols(map, attributes[index]);
+		});
+};
+
+// Defining a function to calculate the radius of each proportional symbol
+function createPropSymbols(data,map,attributes){
+
+// Creating the Leaflet GeoJSON layer and adding the layer to the map
+  L.geoJson(data, {
+    pointToLayer: function(feature, latlng){
+			return pointToLayer(feature, latlng, attributes);
+		}
+  }).addTo(map);
+};
+
+// function createFilter(response, map, attributes){
+// 	$('#all').click(function(){
+// 		console.log(attributes)
+		// 	L.geoJson(response)
+		// });
+		// $('#ten').click(function(){
+		// 	L.geoJson(response, {
+		// 		filter: function(feature, latlng) {
+		// 		return feature.properties[attributes] <= 10;
+		// 		updatePropSymbols(map, attributes)
+		// 		}
+		// 	});
+		// });
+		// $('#fifteen').click(function() {
+		// 	L.geoJson(response, {
+		// 		filter: function(feature, latlng) {
+		// 		return feature.properties[attributes] > 10 && feature.properties[attributes] <=15;
+		// 		updatePropSymbols(map, attributes)
+		// 		}
+		// 	});
+		// });
+		// $('#twenty').click(function(){
+		// 	L.geoJson(response, {
+		// 		filter: function(feature, latlng){
+		// 		return feature.properties[attributes] > 15 && feature.properties[attributes] <= 20;
+		// 		updatePropSymbols(map, attributes)
+		// 		}
+		// 	});
+		// });
+		// $('#twentyplus').click(function(){
+		// 	L.geoJson(response, {
+		// 		filter: function(feature, latlng){
+		// 		return feature.properties[attributes] > 20;
+		// 		updatePropSymboles(map, attributes)
+		// 		}
+		// 	});
+		// });
+// }
+
+// Creating a function to update the proptional symbols for each of the data points
+function updatePropSymbols(map, attribute){
+	map.eachLayer(function(layer){
+		if (layer.feature && layer.feature.properties[attribute]){
+			var props = layer.feature.properties;
+			var radius = calcPropRadius(props[attribute]);
+			layer.setRadius(radius);
+
+// Creating a popup for each of the data points with information
+			var popupContent = "<p><b>Census Tract:</b> " + props.CensusTract + "</p>";
+			var year = attribute.split("_")[1];
+			popupContent += "<p><b>Percentage of Work Commutes by Public Transportation in " + year + ":</b> " + props[attribute]+ " %</p>";
+
+			layer.bindPopup(popupContent, {
+				offset: new L.Point(0,-radius)
+			});
+		};
+	});
 };
 
 $(document).ready(initialize);
