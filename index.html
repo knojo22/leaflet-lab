@@ -13,8 +13,19 @@
 			<link rel="stylesheet" href="css/style.ie.css">
 		<![endif]-->
 	</head>
-		<h3>Percentage of Work Commuters using Public Transportation in Seattle, WA (2015)</h3>
+		<h1>Percentage of Work Commuters using Public Transportation in Seattle, WA (2011-2015)</h1>
+		<h3><p>The purpose of the interactive map is to compare census tracts in Seattle, WA based on the
+			percentage of total workers that use public transportation as the primary mode choice for work commutes from
+			2011 to 2015.</p></h3>
+		<!-- Source: ACS 2015 5 Year Estimates Means of Transportation to Work By Age (B08101) -->
 	<body>
+		<div class="btn-group">
+			<button type="button" id="all" class="btn btn-success">All</button>
+			<button type="button" id="ten" class="btn btn-primary">5-10%</button>
+			<button type="button" id="fifteen" class="btn btn-primary">10-15%</button>
+			<button type="button" id="twenty" class="btn btn-primary">15-20%</button>
+			<button type="button" id="twentyplus" class="btn btn-primary">20%+</button>
+	</div>
 		<div id="mapid"></div>
 		<div id="panel"></div>
 		<script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
